@@ -20,6 +20,11 @@ function truncate(text, maxLength = 60) {
   return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 }
 
+function normalizeDisplayUrl(url) {
+  const value = String(url || "");
+  return value.replace(/^chrome-extension:\/\//i, "extension://");
+}
+
 function formatHoursAndMinutes(durationMs) {
   const totalMinutes = Math.max(0, Math.floor(durationMs / 60_000));
   const hours = Math.floor(totalMinutes / 60);
@@ -65,7 +70,7 @@ function renderList(staleItems = []) {
 
     const meta = document.createElement("p");
     meta.className = "tab-meta";
-    meta.append(`${truncate(item.url, 45)} • `);
+    meta.append(`${truncate(normalizeDisplayUrl(item.url), 45)} • `);
     const ageHighlight = document.createElement("span");
     ageHighlight.className = "tab-meta-age";
     ageHighlight.textContent = ageText;

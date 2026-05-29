@@ -29,15 +29,9 @@ function escapeHtml(text) {
     .replace(/'/g, "&#39;");
 }
 
-function toSafeHref(url) {
-  const value = String(url || "").trim();
-  if (!value) {
-    return "";
-  }
-  if (/^(javascript|data):/i.test(value)) {
-    return "";
-  }
-  return value;
+function normalizeDisplayUrl(url) {
+  const value = String(url || "");
+  return value.replace(/^chrome-extension:\/\//i, "extension://");
 }
 
 function renderRows(items) {
@@ -53,19 +47,15 @@ function renderRows(items) {
   for (const item of items) {
     const tr = document.createElement("tr");
 
-    const safeHref = toSafeHref(item.url);
-    const displayUrl = escapeHtml(truncate(item.url, 220));
-    const urlCell = safeHref
-      ? `<a href="${escapeHtml(safeHref)}" target="_blank" rel="noreferrer">${displayUrl}</a>`
-      : displayUrl;
     tr.innerHTML = `
       <td>${escapeHtml(truncate(item.title, 100))}</td>
-      <td class="url">${urlCell}</td>
+      <td class="url">${escapeHtml(truncate(normalizeDisplayUrl(item.url), 220))}</td>
       <td>${escapeHtml(item.lastActiveAgeLabel)}</td>
     `;
 
     rowsEl.appendChild(tr);
   }
+
 }
 
 async function loadReport() {
