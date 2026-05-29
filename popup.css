@@ -156,7 +156,6 @@ button.secondary {
 .tab-item {
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(23, 33, 46, 0.14);
-  border-left: 4px solid rgba(213, 55, 65, 0.75);
   border-radius: 12px;
   padding: 9px;
   box-shadow: 0 7px 20px rgba(11, 35, 56, 0.09);

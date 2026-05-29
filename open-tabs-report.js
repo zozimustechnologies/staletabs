@@ -45,7 +45,7 @@ function renderRows(items) {
 
   if (!items.length) {
     const tr = document.createElement("tr");
-    tr.innerHTML = "<td colspan=\"6\">No tabs found.</td>";
+    tr.innerHTML = "<td colspan=\"3\">No tabs found.</td>";
     rowsEl.appendChild(tr);
     return;
   }
@@ -53,23 +53,15 @@ function renderRows(items) {
   for (const item of items) {
     const tr = document.createElement("tr");
 
-    const openDurationText = item.openDurationEstimated
-      ? `>= ${item.openDurationLabel} (estimated)`
-      : item.openDurationLabel;
     const safeHref = toSafeHref(item.url);
     const displayUrl = escapeHtml(truncate(item.url, 220));
     const urlCell = safeHref
       ? `<a href="${escapeHtml(safeHref)}" target="_blank" rel="noreferrer">${displayUrl}</a>`
       : displayUrl;
-    const openedAtText = item.openedAt ? new Date(item.openedAt).toLocaleString() : "Unknown";
-
     tr.innerHTML = `
-      <td>${escapeHtml(item.windowId)}</td>
       <td>${escapeHtml(truncate(item.title, 100))}</td>
       <td class="url">${urlCell}</td>
-      <td>${escapeHtml(openDurationText)}</td>
       <td>${escapeHtml(item.lastActiveAgeLabel)}</td>
-      <td>${escapeHtml(openedAtText)}</td>
     `;
 
     rowsEl.appendChild(tr);
