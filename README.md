@@ -13,6 +13,7 @@ Stale Tabs Cleaner helps users reduce tab clutter by detecting stale tabs, provi
 ## Core Features
 
 - Stale detection with configurable threshold in hours or days.
+- Stale tracking includes browser-internal pages (for example `edge://`, `chrome://`, and `about:` URLs).
 - Exclusions for pinned and muted tabs.
 - Popup notifications when stale-tab count exceeds configured threshold.
 - Daily-cadence notifications with snooze support.

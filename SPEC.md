@@ -23,6 +23,7 @@ Help users reduce tab clutter by detecting stale tabs, notifying users when stal
 - The extension must track per-tab last-accessed timestamps.
 - On startup and periodically, the extension must recompute stale status for all open tabs.
 - A tab is marked stale when age >= stale threshold.
+- Tracking scope includes regular web URLs and browser-internal URLs (for example `edge://`, `chrome://`, and `about:`).
 
 Acceptance Criteria:
 - New tabs are not stale at creation.
@@ -173,7 +174,7 @@ Acceptance Criteria:
   - Tooltip and status text should be screen-reader friendly.
 
 ## 8. Edge Cases
-- Tab URL unavailable or restricted.
+- Tab URL unavailable or missing during transient tab lifecycle events.
 - Restored session tabs with missing history.
 - Tabs closed externally before action completes.
 - Clock/timezone changes affecting stale calculations.

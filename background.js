@@ -92,9 +92,6 @@ function isTrackableTab(tab) {
   if (!tab.url) {
     return false;
   }
-  if (tab.url.startsWith("edge://") || tab.url.startsWith("chrome://") || tab.url.startsWith("about:")) {
-    return false;
-  }
   return true;
 }
 
