@@ -21,7 +21,7 @@ Stale Tabs Cleaner helps users reduce tab clutter by detecting stale tabs, provi
 - Bulk close stale tabs and per-tab close actions.
 - Global undo stack for stale close actions.
 - 30-day stale cleanup report with daily trend.
-- Open Tabs report with open duration and time-since-last-active.
+- Live View report with open duration and time-since-last-active.
 
 ## Data and Privacy
 

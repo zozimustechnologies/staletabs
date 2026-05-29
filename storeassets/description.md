@@ -27,7 +27,7 @@ If you keep many tabs open, it is easy to lose track of what is still relevant. 
 - Right-click close-all stale tabs action.
 - Global undo stack for recent stale close actions.
 - 30-day report with daily trend.
-- Open tabs report with open-time and last-active-age columns.
+- Live View report with open-time and last-active-age columns.
 
 ## Privacy and Data Handling
 

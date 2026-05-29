@@ -1,7 +1,6 @@
 const staleListEl = document.getElementById("staleList");
 const subtitleEl = document.getElementById("subtitle");
 const feedbackEl = document.getElementById("feedback");
-const ageHighlightsEl = document.getElementById("ageHighlights");
 const closeAllBtn = document.getElementById("closeAllBtn");
 const undoBtn = document.getElementById("undoBtn");
 const snoozeBtn = document.getElementById("snoozeBtn");
@@ -30,27 +29,6 @@ function formatHoursAndMinutes(durationMs) {
   return `${hourText} ${minuteText}`;
 }
 
-function renderAgeHighlights(staleItems = []) {
-  if (!ageHighlightsEl) {
-    return;
-  }
-
-  const now = Date.now();
-  const thresholds = [1, 2, 3];
-  ageHighlightsEl.innerHTML = "";
-
-  for (const threshold of thresholds) {
-    const count = staleItems.filter(
-      (item) => now - item.lastAccessedAt >= threshold * 3_600_000
-    ).length;
-    const badge = document.createElement("span");
-    badge.className = `age-badge${count > 0 ? " active" : ""}`;
-    badge.title = `${count} tab${count === 1 ? "" : "s"} older than ${threshold} hour${threshold === 1 ? "" : "s"}`;
-    badge.innerHTML = `${threshold}h <span class="age-badge-count">${count}</span>`;
-    ageHighlightsEl.appendChild(badge);
-  }
-}
-
 function renderList(staleItems = []) {
   staleListEl.innerHTML = "";
 
@@ -71,27 +49,30 @@ function renderList(staleItems = []) {
     const tabMain = document.createElement("div");
     tabMain.className = "tab-main";
 
-    const textWrap = document.createElement("div");
+    const titleRow = document.createElement("div");
+    titleRow.className = "tab-title-row";
+
     const title = document.createElement("p");
     title.className = "tab-title";
     title.textContent = truncate(item.title);
 
-    const meta = document.createElement("p");
-    meta.className = "tab-meta";
-    meta.textContent = `${truncate(item.url, 45)} • ${ageText}`;
-
-    textWrap.appendChild(title);
-    textWrap.appendChild(meta);
-
     const chip = document.createElement("span");
     chip.className = "stale-chip";
-    const dot = document.createElement("span");
-    dot.className = "stale-dot";
-    chip.appendChild(dot);
     chip.appendChild(document.createTextNode("STALE"));
 
-    tabMain.appendChild(textWrap);
-    tabMain.appendChild(chip);
+    titleRow.appendChild(title);
+    titleRow.appendChild(chip);
+
+    const meta = document.createElement("p");
+    meta.className = "tab-meta";
+    meta.append(`${truncate(item.url, 45)} • `);
+    const ageHighlight = document.createElement("span");
+    ageHighlight.className = "tab-meta-age";
+    ageHighlight.textContent = ageText;
+    meta.appendChild(ageHighlight);
+
+    tabMain.appendChild(titleRow);
+    tabMain.appendChild(meta);
 
     const actions = document.createElement("div");
     actions.className = "tab-actions";
@@ -123,7 +104,6 @@ async function loadData() {
   const data = await sendMessage("getDashboardData");
   subtitleEl.textContent = `${data.staleCount} stale tab${data.staleCount === 1 ? "" : "s"} found`;
   const staleItems = data.staleItems || [];
-  renderAgeHighlights(staleItems);
   renderList(staleItems);
 }
 

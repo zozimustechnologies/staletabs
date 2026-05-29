@@ -20,12 +20,32 @@ function truncate(text, maxLength = 80) {
   return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 }
 
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function toSafeHref(url) {
+  const value = String(url || "").trim();
+  if (!value) {
+    return "";
+  }
+  if (/^(javascript|data):/i.test(value)) {
+    return "";
+  }
+  return value;
+}
+
 function renderRows(items) {
   rowsEl.innerHTML = "";
 
   if (!items.length) {
     const tr = document.createElement("tr");
-    tr.innerHTML = "<td colspan=\"7\">No open tabs found.</td>";
+    tr.innerHTML = "<td colspan=\"6\">No tabs found.</td>";
     rowsEl.appendChild(tr);
     return;
   }
@@ -33,26 +53,23 @@ function renderRows(items) {
   for (const item of items) {
     const tr = document.createElement("tr");
 
-    const flags = [];
-    if (item.pinned) {
-      flags.push("pinned");
-    }
-    if (item.muted) {
-      flags.push("muted");
-    }
-
     const openDurationText = item.openDurationEstimated
       ? `>= ${item.openDurationLabel} (estimated)`
       : item.openDurationLabel;
+    const safeHref = toSafeHref(item.url);
+    const displayUrl = escapeHtml(truncate(item.url, 220));
+    const urlCell = safeHref
+      ? `<a href="${escapeHtml(safeHref)}" target="_blank" rel="noreferrer">${displayUrl}</a>`
+      : displayUrl;
+    const openedAtText = item.openedAt ? new Date(item.openedAt).toLocaleString() : "Unknown";
 
     tr.innerHTML = `
-      <td>${item.windowId}</td>
-      <td>${truncate(item.title, 100)}</td>
-      <td class="url">${truncate(item.url, 220)}</td>
-      <td>${openDurationText}</td>
-      <td>${item.lastActiveAgeLabel}</td>
-      <td>${item.openedAt ? new Date(item.openedAt).toLocaleString() : "Unknown"}</td>
-      <td>${flags.join(", ") || "-"}</td>
+      <td>${escapeHtml(item.windowId)}</td>
+      <td>${escapeHtml(truncate(item.title, 100))}</td>
+      <td class="url">${urlCell}</td>
+      <td>${escapeHtml(openDurationText)}</td>
+      <td>${escapeHtml(item.lastActiveAgeLabel)}</td>
+      <td>${escapeHtml(openedAtText)}</td>
     `;
 
     rowsEl.appendChild(tr);
@@ -69,7 +86,7 @@ async function loadReport() {
   totalOpenTabsEl.textContent = String(result.totalOpenTabs || 0);
   generatedAtEl.textContent = result.generatedAt ? new Date(result.generatedAt).toLocaleTimeString() : "-";
   renderRows(result.items || []);
-  setStatus("Open tabs report updated.");
+  setStatus("Live view updated.");
 }
 
 // Expose for dashboard tab switching

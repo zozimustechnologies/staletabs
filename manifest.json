@@ -44,8 +44,7 @@
         "popup.html",
         "options.html",
         "report.html",
-        "open-tabs-report.html",
-        "dashboard.html"
+        "open-tabs-report.html"
       ],
       "matches": [
         "<all_urls>"

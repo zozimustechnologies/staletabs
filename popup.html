@@ -14,9 +14,8 @@
           <p id="subtitle">Loading stale tabs...</p>
         </div>
         <div class="top-actions">
+          <a href="report.html" target="_blank" rel="noreferrer">30 Day Report</a>
           <a href="options.html" target="_blank" rel="noreferrer">Settings</a>
-          <a href="report.html" target="_blank" rel="noreferrer">Report</a>
-          <a href="open-tabs-report.html" target="_blank" rel="noreferrer">Open Tabs</a>
         </div>
       </header>
 
@@ -26,13 +25,29 @@
         <button id="snoozeBtn" class="secondary">Snooze 24h</button>
       </section>
 
-      <section id="ageHighlights" class="age-highlights" aria-label="Stale age highlights"></section>
-
       <section>
         <ul id="staleList" class="tab-list"></ul>
       </section>
 
+      <section class="live-view-entry">
+        <a href="open-tabs-report.html" target="_blank" rel="noreferrer">Details - Live View</a>
+      </section>
+
       <p id="feedback" class="feedback"></p>
+
+      <footer class="popup-footer">
+        <a
+          class="donate-btn"
+          href="https://wise.com/pay/business/sandeepchadda?utm_source=open_link"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Donate
+        </a>
+        <a href="https://github.com/zozimustechnologies" target="_blank" rel="noreferrer">
+          Zozimus Technologies Copyright
+        </a>
+      </footer>
     </main>
 
     <script src="popup.js"></script>
