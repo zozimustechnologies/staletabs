@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stale Tabs Report</title>
+    <link rel="stylesheet" href="report.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="head">
+        <div>
+          <h1>30-Day Stale Tabs Report</h1>
+          <p>All metrics are stored locally in this extension.</p>
+        </div>
+        <div class="links">
+          <a href="popup.html">Open stale list</a>
+          <a href="options.html">Settings</a>
+          <a href="open-tabs-report.html">Open tabs report</a>
+        </div>
+      </header>
+
+      <section class="kpis">
+        <article>
+          <h2 id="totalClosed">0</h2>
+          <p>Stale tabs closed (30 days)</p>
+        </article>
+      </section>
+
+      <section>
+        <h3>Daily Trend</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Closed stale tabs</th>
+            </tr>
+          </thead>
+          <tbody id="reportRows"></tbody>
+        </table>
+      </section>
+
+      <section class="actions">
+        <button id="refreshBtn">Refresh</button>
+        <button id="resetBtn" class="danger">Reset All Stats and History</button>
+      </section>
+
+      <p id="status" class="status"></p>
+    </main>
+
+    <script src="report.js"></script>
+  </body>
+</html>

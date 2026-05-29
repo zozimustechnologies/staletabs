@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stale Tabs</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header class="topbar">
+        <div>
+          <h1>Stale Tabs</h1>
+          <p id="subtitle">Loading stale tabs...</p>
+        </div>
+        <div class="top-actions">
+          <a href="options.html" target="_blank" rel="noreferrer">Settings</a>
+          <a href="report.html" target="_blank" rel="noreferrer">Report</a>
+          <a href="open-tabs-report.html" target="_blank" rel="noreferrer">Open Tabs</a>
+        </div>
+      </header>
+
+      <section class="actions">
+        <button id="closeAllBtn" class="danger">Close All Stale Tabs</button>
+        <button id="undoBtn" class="secondary">Undo Last Close</button>
+        <button id="snoozeBtn" class="secondary">Snooze 24h</button>
+      </section>
+
+      <section>
+        <ul id="staleList" class="tab-list"></ul>
+      </section>
+
+      <p id="feedback" class="feedback"></p>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

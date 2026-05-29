@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Tabs Report</title>
+    <link rel="stylesheet" href="open-tabs-report.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="head">
+        <div>
+          <h1>Open Tabs Report</h1>
+          <p>Live view of all currently open tabs and how long each has been open.</p>
+        </div>
+        <div class="links">
+          <a href="popup.html">Open stale list</a>
+          <a href="report.html">30-day stale report</a>
+          <a href="options.html">Settings</a>
+        </div>
+      </header>
+
+      <section class="summary">
+        <article>
+          <h2 id="totalOpenTabs">0</h2>
+          <p>Total open tabs</p>
+        </article>
+        <article>
+          <h2 id="generatedAt">-</h2>
+          <p>Generated at</p>
+        </article>
+      </section>
+
+      <section>
+        <h3>Open Tabs</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Window</th>
+              <th>Title</th>
+              <th>URL</th>
+              <th>Open Time</th>
+              <th>Time Since Last Active</th>
+              <th>Opened At</th>
+              <th>Flags</th>
+            </tr>
+          </thead>
+          <tbody id="openTabsRows"></tbody>
+        </table>
+      </section>
+
+      <section class="actions">
+        <button id="refreshBtn">Refresh</button>
+      </section>
+
+      <p id="status" class="status"></p>
+    </main>
+
+    <script src="open-tabs-report.js"></script>
+  </body>
+</html>

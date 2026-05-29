@@ -1,0 +1,146 @@
+:root {
+  --bg-1: #eff2ff;
+  --bg-2: #f9f3ec;
+  --ink: #152334;
+  --muted: #5e6e82;
+  --brand: #3d7ea6;
+  --brand-soft: #c7e8f0;
+  --line: rgba(21, 35, 52, 0.14);
+  --card: rgba(255, 255, 255, 0.9);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Sora", "Avenir Next", "Trebuchet MS", sans-serif;
+  color: var(--ink);
+  background: #f5f7fa;
+}
+
+.page {
+  max-width: 840px;
+  margin: 34px auto;
+  padding: 0 16px;
+}
+
+header {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 14px 36px rgba(18, 49, 75, 0.12);
+}
+
+h1 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+p {
+  color: var(--muted);
+}
+
+.form-grid {
+  margin-top: 18px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 14px 36px rgba(18, 49, 75, 0.12);
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+input,
+select {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 11px;
+  background: #fff;
+  color: var(--ink);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--brand) 38%, #fff);
+  box-shadow: 0 0 0 3px rgba(10, 94, 127, 0.14);
+}
+
+.check {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+button {
+  border: 1px solid rgba(10, 94, 127, 0.28);
+  border-radius: 12px;
+  padding: 10px 18px;
+  background: var(--brand-soft);
+  color: #083f55;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 220ms ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 9px 22px rgba(12, 55, 80, 0.16);
+}
+
+a {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.status {
+  min-height: 20px;
+  margin-top: 14px;
+  color: #0d4b64;
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

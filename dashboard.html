@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stale Tabs Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Unified Header -->
+      <header class="dashboard-header">
+        <div class="header-content">
+          <h1>Stale Tabs Dashboard</h1>
+          <p>Manage stale tabs and view cleanup statistics</p>
+        </div>
+        <div class="header-actions">
+          <a href="options.html" target="_blank" rel="noreferrer">Settings</a>
+        </div>
+      </header>
+
+      <!-- Tab Navigation -->
+      <nav class="tab-navigation">
+        <button class="tab-button active" data-tab="stale-tabs">
+          Stale Tabs
+        </button>
+        <button class="tab-button" data-tab="report">
+          30-Day Report
+        </button>
+        <button class="tab-button" data-tab="open-tabs">
+          Open Tabs Report
+        </button>
+      </nav>
+
+      <!-- Tab Contents -->
+      <main class="tab-container">
+        <!-- Stale Tabs Tab -->
+        <div class="tab-content active" id="stale-tabs">
+          <div class="popup-section">
+            <header class="section-header">
+              <div>
+                <h2>Stale Tabs</h2>
+                <p id="subtitle">Loading stale tabs...</p>
+              </div>
+            </header>
+
+            <section class="actions">
+              <button id="closeAllBtn" class="danger">Close All Stale Tabs</button>
+              <button id="undoBtn" class="secondary">Undo Last Close</button>
+              <button id="snoozeBtn" class="secondary">Snooze 24h</button>
+            </section>
+
+            <section>
+              <ul id="staleList" class="tab-list"></ul>
+            </section>
+
+            <p id="feedback" class="feedback"></p>
+          </div>
+        </div>
+
+        <!-- 30-Day Report Tab -->
+        <div class="tab-content" id="report">
+          <div class="report-section">
+            <header class="section-header">
+              <div>
+                <h2>30-Day Stale Tabs Report</h2>
+                <p>All metrics are stored locally in this extension.</p>
+              </div>
+            </header>
+
+            <section class="kpis">
+              <article>
+                <h3 id="totalClosed">0</h3>
+                <p>Stale tabs closed (30 days)</p>
+              </article>
+            </section>
+
+            <section class="report-table">
+              <h3>Daily Trend</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Closed stale tabs</th>
+                  </tr>
+                </thead>
+                <tbody id="reportRows"></tbody>
+              </table>
+            </section>
+
+            <section class="actions">
+              <button id="refreshBtn">Refresh</button>
+              <button id="resetBtn" class="danger">Reset All Stats and History</button>
+            </section>
+
+            <p id="status" class="status"></p>
+          </div>
+        </div>
+
+        <!-- Open Tabs Report Tab -->
+        <div class="tab-content" id="open-tabs">
+          <div class="open-tabs-section">
+            <header class="section-header">
+              <div>
+                <h2>Open Tabs Report</h2>
+                <p>Live view of all currently open tabs and how long each has been open.</p>
+              </div>
+            </header>
+
+            <section class="kpis">
+              <article>
+                <h3 id="totalOpenTabs">0</h3>
+                <p>Total open tabs</p>
+              </article>
+              <article>
+                <h3 id="generatedAt">-</h3>
+                <p>Generated at</p>
+              </article>
+            </section>
+
+            <section class="report-table">
+              <h3>Open Tabs</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Window</th>
+                    <th>Title</th>
+                    <th>URL</th>
+                    <th>Open Time</th>
+                    <th>Time Since Last Active</th>
+                    <th>Opened At</th>
+                    <th>Flags</th>
+                  </tr>
+                </thead>
+                <tbody id="openTabsRows"></tbody>
+              </table>
+            </section>
+
+            <section class="actions">
+              <button id="refreshBtn2">Refresh</button>
+            </section>
+
+            <p id="status2" class="status"></p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Scripts for all three tabs -->
+    <script src="popup.js"></script>
+    <script src="report.js"></script>
+    <script src="open-tabs-report.js"></script>
+    <script src="dashboard.js"></script>
+  </body>
+</html>

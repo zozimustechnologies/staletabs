@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stale Tabs Settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header>
+        <h1>Stale Tabs Settings</h1>
+        <p>Configure how stale tabs are identified and when reminders appear.</p>
+      </header>
+
+      <form id="settingsForm" class="form-grid">
+        <label>
+          Stale threshold value
+          <input id="staleThresholdValue" type="number" min="1" required />
+        </label>
+
+        <label>
+          Threshold unit
+          <select id="staleThresholdUnit">
+            <option value="hours">Hours</option>
+            <option value="days">Days</option>
+          </select>
+        </label>
+
+        <label>
+          Notify when stale tabs exceed
+          <input id="notifyWhenStaleCountExceeds" type="number" min="1" required />
+        </label>
+
+        <label>
+          Notification cadence (hours)
+          <input id="notifyCadenceHours" type="number" min="1" required />
+        </label>
+
+        <label>
+          Snooze duration (hours)
+          <input id="snoozeHours" type="number" min="1" required />
+        </label>
+
+        <label class="check">
+          <input id="excludePinnedTabs" type="checkbox" />
+          Exclude pinned tabs from stale detection
+        </label>
+
+        <label class="check">
+          <input id="excludeMutedTabs" type="checkbox" />
+          Exclude muted tabs from stale detection
+        </label>
+
+        <div class="actions">
+          <button type="submit">Save settings</button>
+          <a href="dashboard.html">Open dashboard</a>
+        </div>
+      </form>
+
+      <p id="status" class="status"></p>
+    </main>
+
+    <script src="options.js"></script>
+  </body>
+</html>
