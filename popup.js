@@ -1,6 +1,7 @@
 const staleListEl = document.getElementById("staleList");
 const subtitleEl = document.getElementById("subtitle");
 const feedbackEl = document.getElementById("feedback");
+const ageHighlightsEl = document.getElementById("ageHighlights");
 const closeAllBtn = document.getElementById("closeAllBtn");
 const undoBtn = document.getElementById("undoBtn");
 const snoozeBtn = document.getElementById("snoozeBtn");
@@ -20,6 +21,36 @@ function truncate(text, maxLength = 60) {
   return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 }
 
+function formatHoursAndMinutes(durationMs) {
+  const totalMinutes = Math.max(0, Math.floor(durationMs / 60_000));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const hourText = `${hours} hour${hours === 1 ? "" : "s"}`;
+  const minuteText = `${minutes} minute${minutes === 1 ? "" : "s"}`;
+  return `${hourText} ${minuteText}`;
+}
+
+function renderAgeHighlights(staleItems = []) {
+  if (!ageHighlightsEl) {
+    return;
+  }
+
+  const now = Date.now();
+  const thresholds = [1, 2, 3];
+  ageHighlightsEl.innerHTML = "";
+
+  for (const threshold of thresholds) {
+    const count = staleItems.filter(
+      (item) => now - item.lastAccessedAt >= threshold * 3_600_000
+    ).length;
+    const badge = document.createElement("span");
+    badge.className = `age-badge${count > 0 ? " active" : ""}`;
+    badge.title = `${count} tab${count === 1 ? "" : "s"} older than ${threshold} hour${threshold === 1 ? "" : "s"}`;
+    badge.innerHTML = `${threshold}h <span class="age-badge-count">${count}</span>`;
+    ageHighlightsEl.appendChild(badge);
+  }
+}
+
 function renderList(staleItems = []) {
   staleListEl.innerHTML = "";
 
@@ -32,6 +63,7 @@ function renderList(staleItems = []) {
   }
 
   for (const item of staleItems) {
+    const ageText = formatHoursAndMinutes(Date.now() - item.lastAccessedAt);
     const li = document.createElement("li");
     li.className = "tab-item";
     li.title = `${item.staleReason} Last accessed: ${new Date(item.lastAccessedAt).toLocaleString()}.`;
@@ -46,7 +78,7 @@ function renderList(staleItems = []) {
 
     const meta = document.createElement("p");
     meta.className = "tab-meta";
-    meta.textContent = `${truncate(item.url, 45)} • ${item.ageLabel}`;
+    meta.textContent = `${truncate(item.url, 45)} • ${ageText}`;
 
     textWrap.appendChild(title);
     textWrap.appendChild(meta);
@@ -90,7 +122,9 @@ function renderList(staleItems = []) {
 async function loadData() {
   const data = await sendMessage("getDashboardData");
   subtitleEl.textContent = `${data.staleCount} stale tab${data.staleCount === 1 ? "" : "s"} found`;
-  renderList(data.staleItems || []);
+  const staleItems = data.staleItems || [];
+  renderAgeHighlights(staleItems);
+  renderList(staleItems);
 }
 
 // Expose for dashboard tab switching

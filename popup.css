@@ -82,6 +82,44 @@ h1 {
   gap: 6px;
 }
 
+.age-highlights {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+}
+
+.age-badge {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(23, 33, 46, 0.15);
+  background: rgba(255, 255, 255, 0.88);
+  color: #405062;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  padding: 5px 8px;
+}
+
+.age-badge.active {
+  border-color: rgba(213, 55, 65, 0.45);
+  background: linear-gradient(135deg, #fff1f2 0%, #ffe7ea 100%);
+  color: #8f2730;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.age-badge-count {
+  font-size: 9px;
+  color: #5f6d7e;
+}
+
+.age-badge.active .age-badge-count {
+  color: #8f2730;
+}
+
 button {
   border: 1px solid var(--line);
   border-radius: 12px;
