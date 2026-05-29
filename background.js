@@ -2,6 +2,7 @@ const DEFAULT_SETTINGS = {
   staleThresholdValue: 1,
   staleThresholdUnit: "hours",
   notifyWhenStaleCountExceeds: 10,
+  notifyOnNewlyStaleTabs: true,
   notifyCadenceHours: 24,
   snoozeHours: 24,
   excludePinnedTabs: true,
@@ -18,6 +19,8 @@ const STORAGE_KEYS = {
 };
 
 const STALE_RECHECK_ALARM = "stale-recheck";
+const STALE_RECHECK_INTERVAL_MINUTES = 10;
+const STALE_RECHECK_STARTUP_JITTER_MAX_MS = 30_000;
 const NOTIFY_ID = "stale-tabs-notification";
 const UNDO_NOTIFY_ID = "stale-tabs-undo";
 const NOTIFICATION_ICON = "icon128.png";
@@ -171,7 +174,37 @@ async function syncCurrentTabs() {
     };
   }
 
-  await setInStorage({ [STORAGE_KEYS.tabState]: nextMap });
+  const currentKeys = Object.keys(tabState);
+  const nextKeys = Object.keys(nextMap);
+  let hasChanges = currentKeys.length !== nextKeys.length;
+
+  if (!hasChanges) {
+    for (const key of nextKeys) {
+      const current = tabState[key];
+      const next = nextMap[key];
+      if (
+        !current ||
+        current.tabId !== next.tabId ||
+        current.windowId !== next.windowId ||
+        current.url !== next.url ||
+        current.title !== next.title ||
+        current.pinned !== next.pinned ||
+        current.muted !== next.muted ||
+        current.firstSeenAt !== next.firstSeenAt ||
+        current.firstSeenSource !== next.firstSeenSource ||
+        current.lastAccessedAt !== next.lastAccessedAt ||
+        current.becameStaleAt !== next.becameStaleAt ||
+        current.isStale !== next.isStale
+      ) {
+        hasChanges = true;
+        break;
+      }
+    }
+  }
+
+  if (hasChanges) {
+    await setInStorage({ [STORAGE_KEYS.tabState]: nextMap });
+  }
 }
 
 async function setActionBadge(staleCount) {
@@ -224,6 +257,8 @@ async function recomputeStaleAndNotify({ skipNotifications = false } = {}) {
   const tabState = await getTabStateMap();
 
   let staleCount = 0;
+  let newlyStaleCount = 0;
+  let tabStateChanged = false;
 
   for (const tab of tabs) {
     if (!isTrackableTab(tab)) {
@@ -236,46 +271,88 @@ async function recomputeStaleAndNotify({ skipNotifications = false } = {}) {
       continue;
     }
 
-    state.url = tab.url;
-    state.title = tab.title || "Untitled";
-    state.pinned = Boolean(tab.pinned);
-    state.muted = Boolean(tab.mutedInfo && tab.mutedInfo.muted);
+    const nextUrl = tab.url;
+    const nextTitle = tab.title || "Untitled";
+    const nextPinned = Boolean(tab.pinned);
+    const nextMuted = Boolean(tab.mutedInfo && tab.mutedInfo.muted);
+
+    if (state.url !== nextUrl) {
+      state.url = nextUrl;
+      tabStateChanged = true;
+    }
+    if (state.title !== nextTitle) {
+      state.title = nextTitle;
+      tabStateChanged = true;
+    }
+    if (state.pinned !== nextPinned) {
+      state.pinned = nextPinned;
+      tabStateChanged = true;
+    }
+    if (state.muted !== nextMuted) {
+      state.muted = nextMuted;
+      tabStateChanged = true;
+    }
 
     if (isExcluded(tab, settings)) {
-      state.isStale = false;
-      state.becameStaleAt = null;
+      if (state.isStale) {
+        state.isStale = false;
+        tabStateChanged = true;
+      }
+      if (state.becameStaleAt !== null) {
+        state.becameStaleAt = null;
+        tabStateChanged = true;
+      }
       continue;
     }
 
+    const wasStale = Boolean(state.isStale);
     const ageMs = now - state.lastAccessedAt;
     const stale = ageMs >= thresholdMs;
     if (stale) {
       staleCount += 1;
-      state.becameStaleAt = state.becameStaleAt || now;
+      if (!state.becameStaleAt) {
+        state.becameStaleAt = now;
+        tabStateChanged = true;
+      }
+      if (!wasStale) {
+        newlyStaleCount += 1;
+      }
     } else {
-      state.becameStaleAt = null;
+      if (state.becameStaleAt !== null) {
+        state.becameStaleAt = null;
+        tabStateChanged = true;
+      }
     }
-    state.isStale = stale;
+
+    if (state.isStale !== stale) {
+      state.isStale = stale;
+      tabStateChanged = true;
+    }
   }
 
-  await setInStorage({ [STORAGE_KEYS.tabState]: tabState });
+  if (tabStateChanged) {
+    await setInStorage({ [STORAGE_KEYS.tabState]: tabState });
+  }
   await setActionBadge(staleCount);
 
   if (!skipNotifications) {
-    await maybeNotify(staleCount, settings);
+    await maybeNotify(staleCount, settings, { newlyStaleCount });
   }
 
   return staleCount;
 }
 
-async function maybeNotify(staleCount, settings) {
+async function maybeNotify(staleCount, settings, { newlyStaleCount = 0 } = {}) {
   const now = getNow();
   const notificationState = await getNotificationState();
   const threshold = settings.notifyWhenStaleCountExceeds;
   const isAbove = staleCount > threshold;
+  const hasNewlyStaleTabs = newlyStaleCount > 0;
   const cadenceMs = settings.notifyCadenceHours * 3_600_000;
+  const shouldNotifyForNewStaleTabs =
+    Boolean(settings.notifyOnNewlyStaleTabs) && hasNewlyStaleTabs && staleCount > 0;
 
-  if (!isAbove) {
+  if (!isAbove && !shouldNotifyForNewStaleTabs) {
     if (notificationState.lastConditionState !== "below_threshold") {
       notificationState.lastConditionState = "below_threshold";
       await setInStorage({ [STORAGE_KEYS.notificationState]: notificationState });
@@ -286,18 +363,31 @@ async function maybeNotify(staleCount, settings) {
   const isSnoozed = notificationState.snoozedUntil && notificationState.snoozedUntil > now;
   const inCadence = notificationState.lastNotifiedAt && now - notificationState.lastNotifiedAt < cadenceMs;
 
-  notificationState.lastConditionState = "above_threshold";
+  notificationState.lastConditionState = isAbove ? "above_threshold" : "below_threshold";
 
-  if (isSnoozed || inCadence) {
+  if (isSnoozed || (inCadence && !shouldNotifyForNewStaleTabs)) {
     await setInStorage({ [STORAGE_KEYS.notificationState]: notificationState });
     return;
+  }
+
+  let title = "Too many stale tabs";
+  let message = `You currently have ${staleCount} stale tabs. Click to review stale tabs list.`;
+
+  if (shouldNotifyForNewStaleTabs) {
+    if (newlyStaleCount === 1) {
+      title = "Another tab became stale";
+      message = `You now have ${staleCount} stale tabs. Click to review stale tabs list.`;
+    } else {
+      title = `${newlyStaleCount} tabs became stale`;
+      message = `You now have ${staleCount} stale tabs. Click to review stale tabs list.`;
+    }
   }
 
   await chrome.notifications.create(NOTIFY_ID, {
     type: "basic",
     iconUrl: chrome.runtime.getURL(NOTIFICATION_ICON),
-    title: "Too many stale tabs",
-    message: `You currently have ${staleCount} stale tabs. Click to review stale tabs list.`,
+    title,
+    message,
     priority: 2,
     buttons: [{ title: "Close all stale tabs" }, { title: "Snooze 24h" }]
   });
@@ -307,9 +397,19 @@ async function maybeNotify(staleCount, settings) {
   await setInStorage({ [STORAGE_KEYS.notificationState]: notificationState });
 }
 
-async function ensureAlarm() {
+async function ensureAlarm({ withStartupJitter = false } = {}) {
   await chrome.alarms.clear(STALE_RECHECK_ALARM);
-  await chrome.alarms.create(STALE_RECHECK_ALARM, { periodInMinutes: 30 });
+
+  const alarmOptions = {
+    periodInMinutes: STALE_RECHECK_INTERVAL_MINUTES
+  };
+
+  if (withStartupJitter) {
+    const jitterMs = Math.floor(Math.random() * (STALE_RECHECK_STARTUP_JITTER_MAX_MS + 1));
+    alarmOptions.when = Date.now() + jitterMs;
+  }
+
+  await chrome.alarms.create(STALE_RECHECK_ALARM, alarmOptions);
 }
 
 async function ensureContextMenus() {
@@ -676,6 +776,7 @@ async function saveSettings(nextSettings) {
     notifyWhenStaleCountExceeds: Math.max(1, Number(nextSettings.notifyWhenStaleCountExceeds || DEFAULT_SETTINGS.notifyWhenStaleCountExceeds)),
     notifyCadenceHours: Math.max(1, Number(nextSettings.notifyCadenceHours || DEFAULT_SETTINGS.notifyCadenceHours)),
     snoozeHours: Math.max(1, Number(nextSettings.snoozeHours || DEFAULT_SETTINGS.snoozeHours)),
+    notifyOnNewlyStaleTabs: Boolean(nextSettings.notifyOnNewlyStaleTabs),
     excludePinnedTabs: Boolean(nextSettings.excludePinnedTabs),
     excludeMutedTabs: Boolean(nextSettings.excludeMutedTabs)
   };
@@ -705,14 +806,14 @@ async function resetAllData() {
 chrome.runtime.onInstalled.addListener(async () => {
   const settings = await getSettings();
   await setInStorage({ [STORAGE_KEYS.settings]: settings });
-  await ensureAlarm();
+  await ensureAlarm({ withStartupJitter: true });
   await ensureContextMenus();
   await syncCurrentTabs();
   await recomputeStaleAndNotify({ skipNotifications: true });
 });
 
 chrome.runtime.onStartup.addListener(async () => {
-  await ensureAlarm();
+  await ensureAlarm({ withStartupJitter: true });
   await ensureContextMenus();
   await syncCurrentTabs();
   await recomputeStaleAndNotify({ skipNotifications: true });

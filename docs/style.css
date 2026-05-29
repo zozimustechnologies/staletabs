@@ -38,7 +38,7 @@ a:hover {
 .hero {
   position: relative;
   padding: 80px 24px 60px;
-  background: linear-gradient(135deg, #3d7ea6 0%, #1a4a6e 100%);
+  background: #1a4a6e;
   overflow: hidden;
 }
 

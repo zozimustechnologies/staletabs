@@ -127,6 +127,13 @@ select:focus {
   padding: 10px;
 }
 
+.field-help {
+  grid-column: 1 / -1;
+  margin: -6px 0 2px 34px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .actions {
   margin-top: 16px;
   grid-column: 1 / -1;

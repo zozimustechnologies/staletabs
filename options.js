@@ -13,6 +13,7 @@ function setFormValues(settings) {
   document.getElementById("staleThresholdValue").value = settings.staleThresholdValue;
   document.getElementById("staleThresholdUnit").value = settings.staleThresholdUnit;
   document.getElementById("notifyWhenStaleCountExceeds").value = settings.notifyWhenStaleCountExceeds;
+  document.getElementById("notifyOnNewlyStaleTabs").checked = Boolean(settings.notifyOnNewlyStaleTabs);
   document.getElementById("notifyCadenceHours").value = settings.notifyCadenceHours;
   document.getElementById("snoozeHours").value = settings.snoozeHours;
   document.getElementById("excludePinnedTabs").checked = Boolean(settings.excludePinnedTabs);
@@ -24,6 +25,7 @@ function getFormValues() {
     staleThresholdValue: Number(document.getElementById("staleThresholdValue").value),
     staleThresholdUnit: document.getElementById("staleThresholdUnit").value,
     notifyWhenStaleCountExceeds: Number(document.getElementById("notifyWhenStaleCountExceeds").value),
+    notifyOnNewlyStaleTabs: document.getElementById("notifyOnNewlyStaleTabs").checked,
     notifyCadenceHours: Number(document.getElementById("notifyCadenceHours").value),
     snoozeHours: Number(document.getElementById("snoozeHours").value),
     excludePinnedTabs: document.getElementById("excludePinnedTabs").checked,

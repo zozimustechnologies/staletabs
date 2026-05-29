@@ -6,7 +6,6 @@
   --muted: #5f6d7e;
   --brand: #3d7ea6;
   --brand-strong: #1a4a6e;
-  --brand-gradient: linear-gradient(135deg, #3d7ea6 0%, #1a4a6e 100%);
   --danger: #d53741;
   --danger-soft: #ffe9eb;
   --card: rgba(255, 255, 255, 0.86);
@@ -37,7 +36,7 @@ body {
   justify-content: space-between;
   gap: 8px;
   align-items: flex-start;
-  background: linear-gradient(180deg, rgba(61, 126, 166, 0.12) 0%, rgba(255, 255, 255, 0.94) 72%);
+  background: rgba(255, 255, 255, 0.94);
   border: 1px solid rgba(26, 74, 110, 0.16);
   border-radius: 16px;
   box-shadow: var(--shadow);
@@ -90,7 +89,7 @@ button {
   padding: 8px 7px;
   font-size: 11px;
   font-weight: 700;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(241, 246, 251, 0.95) 100%);
+  background: rgba(255, 255, 255, 0.98);
   color: #1a2736;
   cursor: pointer;
   box-shadow: 0 2px 0 rgba(23, 33, 46, 0.12), 0 8px 14px rgba(17, 52, 79, 0.08);
@@ -109,13 +108,13 @@ button:active {
 }
 
 button.danger {
-  background: linear-gradient(180deg, #ffffff 0%, #f2f6fb 100%);
+  background: #ffffff;
   border-color: rgba(23, 33, 46, 0.2);
   color: #1f2d3d;
 }
 
 button.secondary {
-  background: linear-gradient(180deg, #ffffff 0%, #f2f6fb 100%);
+  background: #ffffff;
   border-color: rgba(23, 33, 46, 0.2);
   color: #1f2d3d;
 }

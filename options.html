@@ -38,6 +38,12 @@
           <input id="notifyWhenStaleCountExceeds" type="number" min="1" required />
         </label>
 
+        <label class="check">
+          <input id="notifyOnNewlyStaleTabs" type="checkbox" />
+          Notify when another tab becomes stale
+        </label>
+        <p class="field-help">Snooze still pauses these alerts. If this is off, only threshold-based reminders are shown.</p>
+
         <label>
           Notification cadence (hours)
           <input id="notifyCadenceHours" type="number" min="1" required />
